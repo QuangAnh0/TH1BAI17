@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>List Customer</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<!--    <script type="text/javascript" src="list.js"></script>-->
+    <script type="text/javascript">
+        // function addNewCustomer(){
+        //     let name= $('#name').val();
+        //     let address= $('#address').val();
+        //     let newCustomer={
+        //         name : name,
+        //         address: address
+        //     }
+        //     $.ajax({
+        //         headers:{
+        //             'Accept': 'application/json',
+        //             'Content-Type': 'application/json'
+        //         },
+        //         type:"post",
+        //         data:JSON.stringify(newCustomer),
+        //         url:"/customer/",
+        //         success:listCustomer
+        //     })
+        // }
+        function listCustomer(){
+            $.ajax({
+                type: "GET",
+                url: "/customer/",
+                success:function (data){
+                    let content = '    <tr>\n' +
+                        '        <td>Name</td>\n' +
+                        '        <td>Address</td>\n' +
+                        '        <td>Delete</td>\n' +
+                        '    </tr>';
+                    for (let i = 0; i < data.length; i++) {
+                        content += getCustomer(data[i]);
+                    }
+                    document.getElementById('customerList').innerHTML = content;
+                }
+            })
+        }
+
+        function getCustomer(customer) {
+            return `<tr>
+                    <td >${customer.name}</td>
+                    <td >${customer.address}</td>` +
+                `<td><a class="deleteCustomer" href="${customer.id}">Delete</a></td>
+                    </tr>`;
+        }
+
+
+        listCustomer();
+
+        $(document).ready(function () {
+            //sư kiện nào thực hiện Ajax
+            $('.deleteCustomer').click(function (event) {
+                //lay du lieu
+                let a = $(this);
+                let customerId = a.attr("href");
+                // goi ajax
+                $.ajax({
+                    type: "DELETE",
+                    //tên API
+                    url: `/customer/${customerId}`,
+                    //xử lý khi thành công
+                    success: function (data) {
+                        a.parent().parent().remove();
+                    }
+
+
+                });
+                //chặn sự kiện mặc định của thẻ
+                event.preventDefault();
+            });
+        })
+    </script>
+
+</head>
+<body>
+<h1>Hello</h1>
+<table id="customerList"></table>
+<!--<form id="add-customer">-->
+<!--    <table>-->
+<!--        <tr>-->
+<!--            <td>Name:</td>-->
+<!--            <td><input type="text" id="name" placeholder="name"></td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <td>Address:</td>-->
+<!--            <td><input type="text" id="address" placeholder="address"></td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <td></td>-->
+<!--            <td><input type="submit" value="Add" onclick="addNewCustomer()"></td>-->
+<!--        </tr>-->
+<!--    </table>-->
+<!--</form>-->
+<!--<h1>Customer List</h1>-->
+<!--<table id="customerList">-->
+<!--    <tr>-->
+<!--        <td>Name</td>-->
+<!--        <td>Address</td>-->
+<!--&lt;!&ndash;        <td>Update</td>&ndash;&gt;-->
+<!--        <td>Delete</td>-->
+<!--    </tr>-->
+<!--    <th:block th:each="cs: ${}">-->
+<!--        <tr>-->
+<!--            <td th:text="${cs.name}"></td>-->
+<!--            <td th:text="${cs.address}"></td>-->
+<!--&lt;!&ndash;            <td><a class="deleteSmartphone" th:href="${smartphone.getId()}">Update</a></td>&ndash;&gt;-->
+<!--            <td><a class="deleteCustomer" th:href="${smartphone.getId()}">Delete</a></td>-->
+<!--        </tr>-->
+<!--    </th:block>-->
+</body>
+</html>
